@@ -49,9 +49,15 @@ class DownloadUserFiles implements ShouldQueue
         $aFiles = $this->aFiles;
 
         foreach($aFiles as $aFile) {
+
+            // Retrieving Files from AWS S3 bucket
+            $file = base64_decode($aFile);
+            $name = basename($aFile);
+            $oRaw = Storage::disk('s3')->download($file, $name);
+
             $sFile = $this->sDirectory . $aFile;
             if (!Storage::disk('local')->exists($sFile)) {
-                Storage::disk('local')->put($sFile, 'Contents'); // storage/app/images
+                Storage::disk('local')->put($sFile, $oRaw); // storage/app/
                 sleep(10);
             }
         }
