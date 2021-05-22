@@ -36,4 +36,14 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    // Get file list by user
+    public function getFileList() {
+        return [
+            '/file/category_a/1.pdf',
+            '/file/category_a/2.pdf',
+            '/file/category_b/3.pdf',
+            '/file3/category_a/1.pdf',
+        ];
+    }
 }
