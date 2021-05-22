@@ -58,7 +58,7 @@ class DownloadUserFiles implements ShouldQueue
             $sFile = $this->sDirectory . $aFile;
             if (!Storage::disk('local')->exists($sFile)) {
                 Storage::disk('local')->put($sFile, $oRaw); // storage/app/
-                sleep(10);
+                // sleep(10);
             }
         }
     }
