@@ -8,19 +8,26 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Storage;
+use ZipArchive;
+use File;
+
 
 class DownloadUserFiles implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+
+    public $aFiles;
+    public $sDirectory;
 
     /**
      * Create a new job instance.
      *
      * @return void
      */
-    public function __construct()
+    public function __construct($aList, $sDirectory)
     {
-        //
+        $this->aFiles = $aList;
+        $this->sDirectory = $sDirectory;
     }
 
     /**
@@ -36,9 +43,10 @@ class DownloadUserFiles implements ShouldQueue
 
     // Method to download the list of files
     protected function downloadFiles() {
-        // storing few files on local storage for testing
-        foreach(range(1, 5) as $aFile) {
-            $sFile = "example" . $aFile . ".txt";
+        $aFiles = $this->aFiles;
+
+        foreach($aFiles as $aFile) {
+            $sFile = $this->sDirectory . $aFile;
             if (!Storage::disk('local')->exists($sFile)) {
                 Storage::disk('local')->put($sFile, 'Contents'); // storage/app/images
             }
