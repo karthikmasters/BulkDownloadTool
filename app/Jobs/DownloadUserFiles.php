@@ -53,7 +53,7 @@ class DownloadUserFiles implements ShouldQueue
             $sFile = $this->sDirectory . $aFile;
             if (!Storage::disk('local')->exists($sFile)) {
 
-                //
+                // Option to switch s3 to local
                 $sStorageType = "local"; // "s3", "local"
 
                 switch ($sStorageType) {
