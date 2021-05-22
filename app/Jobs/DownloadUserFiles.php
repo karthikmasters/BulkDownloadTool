@@ -37,8 +37,10 @@ class DownloadUserFiles implements ShouldQueue
      */
     public function handle()
     {
-        // download user files
+        // Downloading the files
         $this->downloadFiles();
+
+        // Archiving
         $this->archive();
     }
 
