@@ -39,6 +39,7 @@ class DownloadUserFiles implements ShouldQueue
     {
         // download user files
         $this->downloadFiles();
+        $this->archive();
     }
 
     // Method to download the list of files
@@ -50,6 +51,28 @@ class DownloadUserFiles implements ShouldQueue
             if (!Storage::disk('local')->exists($sFile)) {
                 Storage::disk('local')->put($sFile, 'Contents'); // storage/app/images
             }
+        }
+    }
+
+    // Method to archive the downloaded folder
+    protected function archive() {
+
+        // Instantiating Zip object
+        $oZip = new ZipArchive;
+        $directory = 'app/' . $this->sDirectory;
+
+        // Retrieving downloaded files
+        $files = File::allFiles(storage_path($directory));
+
+        // Archiving logic
+        $fileName = $this->sDirectory . '.zip';
+        if ($oZip->open(public_path($fileName), ZipArchive::CREATE) == TRUE) {
+            foreach ($files as $aFile) {
+                $filePath = explode($this->sDirectory, base_path($aFile));
+                $sFilePath = substr(str_replace('\\', '/', $filePath[1]), 1);
+                $oZip->addFile($aFile, $sFilePath);
+            }
+            $oZip->close();
         }
     }
 }
