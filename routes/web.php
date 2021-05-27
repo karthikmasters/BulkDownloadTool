@@ -21,3 +21,4 @@ Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
 Route::get('/download', 'DownloadController@dispatchJob')->name('download');
+Route::get('/download-status', 'DownloadController@getDownloadStatus')->name('download-status');

@@ -29,4 +29,39 @@ class DownloadController extends Controller
         // Dispatching DownloadJob
         dispatch($downloadJob);
     }
+
+    // Get download status
+    public function getDownloadStatus() {
+
+        // Get download status
+        $sStatus = Auth::user()->download_status;
+
+        if ($sStatus == 'READY') {
+            $response = [
+                'success' => true,
+                'response' => $sStatus,
+                'message' => 'Ready for download',
+                'link' => Auth::user()->download_link,
+            ];
+        } elseif ($sStatus == 'PROGRESS') {
+            $response = [
+                'success' => true,
+                'response' => $sStatus,
+                'message' => 'Download In-Progress'
+            ];
+        } elseif ($sStatus == '') {
+            $response = [
+                'success' => true,
+                'response' => '',
+                'message' => 'Nothing is ready for download'
+            ];
+        } else {
+            $response = [
+                'success' => false,
+                'response' => 'ERROR',
+                'message' => 'Invalid request'
+            ];
+        }
+        return response()->json($response);
+    }
 }
