@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Jobs\DownloadUserFiles;
 use Auth;
+use App\User;
 
 class DownloadController extends Controller
 {
@@ -16,6 +17,11 @@ class DownloadController extends Controller
 
         // Setting Directory/Zip file name
         $sDirectory =  Auth::user()->id . "-" . date('Y-m-d-H-i-s');
+
+        // Update download status to PROGRESS
+        Auth::user()->download_status = 'PROGRESS';
+        Auth::user()->download_link = $sDirectory . ".zip";
+        Auth::user()->save();
 
         // Passing FileList and Directory parameters
         $downloadJob = new DownloadUserFiles($aFiles, $sDirectory);

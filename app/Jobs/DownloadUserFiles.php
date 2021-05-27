@@ -10,6 +10,7 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Storage;
 use ZipArchive;
 use File;
+use App\User;
 
 
 class DownloadUserFiles implements ShouldQueue
@@ -83,6 +84,8 @@ class DownloadUserFiles implements ShouldQueue
         // Instantiating Zip object
         $oZip = new ZipArchive;
         $directory = 'app/' . $this->sDirectory;
+        $userId = explode('-', $this->sDirectory);
+        $userId = $userId[0];
 
         // Retrieving downloaded files
         $files = File::allFiles(storage_path($directory));
@@ -96,6 +99,11 @@ class DownloadUserFiles implements ShouldQueue
                 $oZip->addFile($aFile, $sFilePath);
             }
             $oZip->close();
+
+            // Updating download status to READY
+            $user = User::find($userId);
+            $user->download_status = 'READY';
+            $user->save();
         }
     }
 }
