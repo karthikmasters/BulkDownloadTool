@@ -29,4 +29,40 @@ Vue.component('example-component', require('./components/ExampleComponent.vue').
 
 const app = new Vue({
     el: '#app',
+    data: {
+        downloadStatus: '',
+        downloadLink: '',
+        polling: ''
+    },
+    mounted () {
+        this.getDownloadStatus()
+    },
+    methods: {
+        initiateDownload() {
+            axios
+                .get('/download')
+                .then(response => {
+                    this.downloadStatus = "PROGRESS"
+                    this.startPolling()
+                })
+        },
+        getDownloadStatus() {
+            axios
+                .get('/download-status')
+                .then(response => {
+                    this.downloadStatus = response.data.response
+                    if (this.downloadStatus == 'READY') {
+                        this.downloadLink = response.data.link
+                        clearInterval(this.polling)
+                    } else if (this.downloadStatus == 'PROGRESS') {
+                        this.downloadLink = response.data.link
+                    }
+                })
+        },
+        startPolling() {
+            this.polling = setInterval(() => {
+                this.getDownloadStatus();
+            }, 2000);
+        },
+    }
 });

@@ -49820,7 +49820,47 @@ Vue.component('example-component', __webpack_require__(/*! ./components/ExampleC
  */
 
 var app = new Vue({
-  el: '#app'
+  el: '#app',
+  data: {
+    downloadStatus: '',
+    downloadLink: '',
+    polling: ''
+  },
+  mounted: function mounted() {
+    this.getDownloadStatus();
+  },
+  methods: {
+    initiateDownload: function initiateDownload() {
+      var _this = this;
+
+      axios.get('/download').then(function (response) {
+        _this.downloadStatus = "PROGRESS";
+
+        _this.startPolling();
+      });
+    },
+    getDownloadStatus: function getDownloadStatus() {
+      var _this2 = this;
+
+      axios.get('/download-status').then(function (response) {
+        _this2.downloadStatus = response.data.response;
+
+        if (_this2.downloadStatus == 'READY') {
+          _this2.downloadLink = response.data.link;
+          clearInterval(_this2.polling);
+        } else if (_this2.downloadStatus == 'PROGRESS') {
+          _this2.downloadLink = response.data.link;
+        }
+      });
+    },
+    startPolling: function startPolling() {
+      var _this3 = this;
+
+      this.polling = setInterval(function () {
+        _this3.getDownloadStatus();
+      }, 2000);
+    }
+  }
 });
 
 /***/ }),
